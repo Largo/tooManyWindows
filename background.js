@@ -71,9 +71,19 @@ browser.browserAction.onClicked.addListener(() => {
         let nextWindowIndex = (currentWindowIndex + 1) % windows.length;
         let nextWindowId = windows[nextWindowIndex].id;
 
-        // get current dimensions and positions of the active window off this window,
-        // then automatically switch to the next window and set the position and dimension of that one to the same thing.
-        browser.windows.update(nextWindowId, { focused: true });
+      // Get the current dimensions and positions of the active window
+      browser.windows.get(windows.find(win => win.focused).id).then((currentWindow) => {
+        let updateInfo = {
+          left: currentWindow.left,
+          top: currentWindow.top,
+          width: currentWindow.width,
+          height: currentWindow.height,
+          focused: true
+        };
+
+        // Switch to the next window and set its position and dimension
+        browser.windows.update(nextWindowId, updateInfo);
+      });
         currentWindowIndex++;
       }
     });
